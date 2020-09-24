@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const User = mongoose.model("User", new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     email: {
       type: String,
@@ -14,7 +14,15 @@ const User = mongoose.model("User", new mongoose.Schema(
   {
     timestamps: true,
     versionKey: false
-  })
+  }
 );
+
+UserSchema.methods.toJSON = function() {
+  var obj = this.toObject()
+  delete obj.password
+  return obj
+}
+
+const User = mongoose.model("User", UserSchema);
 
 module.exports = User;
