@@ -1,0 +1,19 @@
+{
+  "name": "hurdle-game-mern",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ravi8470/hurdle-game-MERN.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ravi8470/hurdle-game-MERN/issues"
+  },
+  "homepage": "https://github.com/ravi8470/hurdle-game-MERN#readme"
+}
