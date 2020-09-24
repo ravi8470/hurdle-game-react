@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { body, check, validationResult } = require('express-validator');
+const { body, validationResult } = require('express-validator');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -40,6 +40,46 @@ router.post('/register', [
     res.status(500).send("Error in Saving");
   }
 })
+
+router.post("/login",
+  [
+    body('email', 'Please enter a valid Email').isEmail().normalizeEmail().trim(),
+    body('password', 'Password should be minimum 8 chars').isLength({ min: 8 })
+  ], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array()
+      });
+    }
+
+    const { email, password } = req.body;
+    try {
+      let user = await User.findOne({ email });
+      if (!user)
+        return res.status(400).json({
+          message: "User doesn't Exist"
+        });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+        return res.status(400).json({
+          message: "Incorrect Password !"
+        });
+
+      let token = await getToken(user._id);
+      res.status(200).json({
+        token
+      });
+
+    } catch (e) {
+      console.error(e);
+      res.status(500).json({
+        message: "Server Error"
+      });
+    }
+  }
+);
 
 async function getToken(userId) {
   return new Promise((resolve, reject) => {
