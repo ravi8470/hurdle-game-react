@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require('../models/user.model');
+const authMiddleware = require('../middleware/auth.middleware');
 
 router.post('/register', [
   body('email', 'Please enter a valid Email').isEmail().normalizeEmail().trim(),
@@ -81,6 +82,15 @@ router.post("/login",
   }
 );
 
+router.get("/me", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    res.json(user);
+  } catch (e) {
+    res.send({ message: "Error in Fetching user" });
+  }
+});
+
 async function getToken(userId) {
   return new Promise((resolve, reject) => {
     const payload = {
@@ -89,7 +99,7 @@ async function getToken(userId) {
       }
     };
     jwt.sign(payload, process.env.JWT_STRING || "randomString", {
-      expiresIn: 10000
+      expiresIn: '7d'
     }, (err, token) => {
       if (err) reject(err);
       resolve(token);
