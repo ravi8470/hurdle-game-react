@@ -21,7 +21,7 @@ export default class Game extends Component {
   myGamePiece = null;
   myscore = null;
   // highScore = JSON.parse(localStorage.getItem("tokens")).highScore;
-
+  animationId = null;
   updateGameArea = () => {
     var x, y, min, max, height, gap;
     for (let i = 0; i < this.myObstacles.length; i += 1) {
@@ -82,6 +82,7 @@ export default class Game extends Component {
       this.myObstacles[i].x += -1;
       (this.myObstacles[i].x > -10) && this.myObstacles[i].update();
     }
+    this.animationId = window.requestAnimationFrame(this.updateGameArea)
   }
 
   preStartCheck = () => {
@@ -109,7 +110,8 @@ export default class Game extends Component {
     this.myGamePiece = new GameComponent(30, 30, "red", 10, 75, null, this.context);
     this.myObstacles = [];
     this.isRunning = true;
-    this.myGameArea.start();
+    // this.myGameArea.start();
+    window.requestAnimationFrame(this.updateGameArea)
   }
 
   moveup = () => {
@@ -198,6 +200,7 @@ export default class Game extends Component {
     this.myObstacles = null;
     this.myGamePiece = null;
     this.myscore = null;
+    window.cancelAnimationFrame(this.animationId)
   }
 
   render() {

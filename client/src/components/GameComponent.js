@@ -12,16 +12,16 @@ export default function GameComponent(width, height, color, x, y, type, ctx) {
   this.update = function () {
     if (this.type === "text") {
       // ctx.font = this.width + " " + this.height ;
-      window.requestAnimationFrame(() => {
+      // window.requestAnimationFrame(() => {
         ctx.font = 'normal normal 900 20px Consolas'
         ctx.fillStyle = color;
         ctx.fillText(this.text, this.x, this.y);
-      })
+      // })
     } else {
-      window.requestAnimationFrame(() => {
+      // window.requestAnimationFrame(() => {
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
-      })
+      // })
     }
   }
   this.crashWith = function (otherobj) {
