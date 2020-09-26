@@ -7,7 +7,7 @@ import { LOGIN_URL } from "../constants/Urls";
 function Login(props) {
 
   // const referer = props.location && props.location.state && props.location.state.referer || '/';
-  const referer = props?.location?.state?.referer || '/';
+  // const referer = props?.location?.state?.referer || '/';
 
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -18,7 +18,6 @@ function Login(props) {
   function doLogin(e) {
     e.preventDefault();
     axios.post(LOGIN_URL, { email: userName, password }).then(result => {
-      console.log(result)
       if (result.status === 200) {
         setAuthTokens(result.data);
         setLoggedIn(true);
@@ -26,14 +25,11 @@ function Login(props) {
         setIsError(true);
       }
     }).catch(e => {
-      console.log(e.response)
-      console.log('isloggedin', isLoggedIn)
       setIsError(true);
     });
   }
 
   if (isLoggedIn) {
-    console.log('inside isloggedin')
     // return <Redirect to={referer} />;
     return <Redirect to="/game" />;
   }

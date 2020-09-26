@@ -1,6 +1,6 @@
 export default function GameComponent(width, height, color, x, y, type, ctx) {
   this.type = type;
-  if (type == "text") {
+  if (type === "text") {
     this.text = color;
   }
   this.score = 0; this.width = width;
@@ -10,7 +10,7 @@ export default function GameComponent(width, height, color, x, y, type, ctx) {
   this.x = x;
   this.y = y;
   this.update = function () {
-    if (this.type == "text") {
+    if (this.type === "text") {
       // ctx.font = this.width + " " + this.height ;
       window.requestAnimationFrame(() => {
         ctx.font = 'normal normal 900 20px Consolas'

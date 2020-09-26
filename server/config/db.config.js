@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const MONGOURI = "mongodb://localhost:27017/hurdle-game-MERN";
-mongoose.set('debug',true)
+// mongoose.set('debug',true)
 const InitiateMongoServer = async () => {
   try {
     await mongoose.connect(MONGOURI, {

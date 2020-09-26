@@ -32,18 +32,18 @@ function App(props) {
             <li>
               <Link to="/">Home Page</Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/admin">Admin Page</Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/game">Game Page</Link>
             </li>
-            {(existingTokens) && (<button onClick={() => logout()}>Logout</button>)}
+            {(existingTokens) && (<button className='logOutBtn' onClick={() => logout()}>Logout</button>)}
           </ul>
           <Route exact path="/" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Signup} />
-          <PrivateRoute path="/admin" component={Admin} />
+          {/* <PrivateRoute path="/admin" component={Admin} /> */}
           <PrivateRoute path="/game" component={Game} />
         </div>
       </Router>

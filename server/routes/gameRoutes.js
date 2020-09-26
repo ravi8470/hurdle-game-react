@@ -59,6 +59,10 @@ router.get('/allow-play', authMiddleware, async (req, res) => {
 async function getHighScore(userId) {
   return new Promise(async (resolve, reject) => {
     try {
+      let numDocs = await Game.countDocuments({ user: mongoose.Types.ObjectId(userId) });
+      if (numDocs < 1) {
+        resolve({ score: 0 });
+      }
       let highScore = await Game.findOne({ user: mongoose.Types.ObjectId(userId) }).sort('-score');
       resolve(highScore);
     } catch (err) {

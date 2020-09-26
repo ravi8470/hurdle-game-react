@@ -34,7 +34,8 @@ router.post('/register', [
 
     let token = await getToken(user._id);
     res.status(200).json({
-      token
+      token,
+      highScore:0
     });
 
   } catch (err) {

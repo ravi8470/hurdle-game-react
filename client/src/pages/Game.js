@@ -1,8 +1,17 @@
+import axios from 'axios';
 import React, { Component } from 'react';
 import GameArea from '../components/GameArea';
 import GameComponent from '../components/GameComponent';
+import { ALLOW_PLAY, POST_SCORE } from '../constants/Urls';
 
 export default class Game extends Component {
+
+  constructor() {
+    super();
+    this.state = {
+      highScore: JSON.parse(localStorage.getItem("tokens")).highScore
+    }
+  }
 
   myRef = React.createRef();
   canvas = null;
@@ -11,30 +20,28 @@ export default class Game extends Component {
   myObstacles = [];
   myGamePiece = null;
   myscore = null;
-  isRunning = false;
+  // highScore = JSON.parse(localStorage.getItem("tokens")).highScore;
 
   updateGameArea = () => {
     var x, y, min, max, height, gap;
     for (let i = 0; i < this.myObstacles.length; i += 1) {
       if (this.myGamePiece.crashWith(this.myObstacles[i])) {
         this.myGameArea.stop();
-        console.log(this.myObstacles)
         // document.getElementById("myfilter").style.display = "block";
         // document.getElementById("myrestartbutton").style.display = "block";
         return;
       }
     }
-    console.log(this.myObstacles.length)
     if (this.myObstacles.length > 18) {
       // this.myObstacles.splice(0, 6)
       // this.myObstacles = this.myObstacles.slice(-6)
       this.myObstacles = this.myObstacles.filter(x => x.x > -10);
     }
-    if (this.myGameArea.pause == false) {
+    if (this.myGameArea.pause === false) {
       this.myGameArea.clear();
       this.myGameArea.frameNo += 1;
       this.myscore.score += 1;
-      if (this.myGameArea.frameNo == 1 || this.myGameArea.frameNo % 150 == 0) {
+      if (this.myGameArea.frameNo === 1 || this.myGameArea.frameNo % 150 === 0) {
         x = this.canvas.width;
         y = this.canvas.height - 100;
         min = 20;
@@ -54,12 +61,20 @@ export default class Game extends Component {
       this.myscore.update();
       this.myGamePiece.x += this.myGamePiece.speedX;
       this.myGamePiece.y += this.myGamePiece.speedY;
+      // Prevent overflow of game piece from game area
+      if (this.myGamePiece.x < 0) this.myGamePiece.x = 0;
+      if (this.myGamePiece.x > (this.canvas.width - this.myGamePiece.width)) {
+        this.myGamePiece.x = this.canvas.width - this.myGamePiece.width;
+      }
+      if (this.myGamePiece.y < 0) this.myGamePiece.y = 0;
+      if (this.myGamePiece.y > (this.canvas.height - this.myGamePiece.height)) {
+        this.myGamePiece.y = this.canvas.height - this.myGamePiece.height;
+      }
       this.myGamePiece.update();
     }
     for (let i = 0; i < this.myObstacles.length; i += 1) {
       if (this.myGamePiece.crashWith(this.myObstacles[i])) {
         this.myGameArea.stop();
-        console.log(this.myObstacles)
         // document.getElementById("myfilter").style.display = "block";
         // document.getElementById("myrestartbutton").style.display = "block";
         return;
@@ -67,6 +82,21 @@ export default class Game extends Component {
       this.myObstacles[i].x += -1;
       (this.myObstacles[i].x > -10) && this.myObstacles[i].update();
     }
+  }
+
+  preStartCheck = () => {
+    axios.get(ALLOW_PLAY, { headers: { 'token': this.getToken() } })
+      .then(result => {
+        if (result.status === 200) {
+          if (result.data && result.data.gameCount > 12) {
+            window.alert('You have already played 12 times today.Try tomorrow!')
+          } else {
+            this.startGame()
+          }
+        }
+      }).catch(e => {
+        window.alert('You have already played 12 times today.Try tomorrow!')
+      })
   }
 
   startGame = () => {
@@ -103,6 +133,33 @@ export default class Game extends Component {
     this.isRunning && (this.myGamePiece.speedY = 0);
   }
 
+  getToken = () => {
+    let token = JSON.parse(localStorage.getItem("tokens")).token;
+    return token;
+  }
+
+  postScore = () => {
+    let tokenx = this.getToken();
+    if (this.myscore.score > this.state.highScore) {
+      // this.state.highScore = this.myscore.score;
+      this.setState({ highScore: this.myscore.score });
+      localStorage.setItem('tokens', JSON.stringify(
+        { token: tokenx, highScore: this.state.highScore }
+      ));
+    }
+    axios.post(POST_SCORE, { score: this.myscore.score }, { headers: { 'token': tokenx } })
+      .then(result => {
+        if (result.status === 200) {
+          this.setState({ ...this.state, scorePostError: true });
+        }
+      }).catch(e => {
+        this.setState({ ...this.state, scorePostError: true });
+      }).finally(e => {
+        this.isRunning = false;
+      });
+  }
+
+  // keyboard handling
   handleKeyDown = e => {
     if (!this.isRunning) return;
     switch (e.key) {
@@ -110,6 +167,7 @@ export default class Game extends Component {
       case 'ArrowDown': this.movedown(); break;
       case 'ArrowLeft': this.moveleft(); break;
       case 'ArrowRight': this.moveright(); break;
+      default: return;
     }
   }
 
@@ -119,7 +177,8 @@ export default class Game extends Component {
       case 'ArrowUp':
       case 'ArrowDown':
       case 'ArrowLeft':
-      case 'ArrowRight': this.clearmove();
+      case 'ArrowRight': this.clearmove(); break;
+      default: return;
     }
   }
 
@@ -131,13 +190,23 @@ export default class Game extends Component {
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleKeyDown);
     document.removeEventListener('keyup', this.handleKeyUp);
+    this.myGameArea && this.myGameArea.clearMem();
+    this.myRef = null;
+    this.canvas = null;
+    this.context = null;
+    this.myGameArea = null;
+    this.myObstacles = null;
+    this.myGamePiece = null;
+    this.myscore = null;
   }
 
   render() {
     return (
       <>
+        {/* {(this.state.scorePostError) && (<h4 style={{ color: 'red' }}>Error in Posting Score!</h4>)} */}
+        <h2>High Score:{this.state.highScore}</h2>
         <canvas ref={this.myRef} className='canvasClass' /><br />
-        <button onClick={() => this.startGame()}>Start Game</button>
+        <button onClick={this.preStartCheck}>Start Game</button>
         <div className='controlButtons'>
           <button style={{ marginLeft: '30px' }} onTouchStart={this.moveup}
             onMouseDown={this.moveup} onMouseUp={this.clearmove}>UP

@@ -33,3 +33,7 @@
   height: 400px;
   background-color: lightblue;
 }
+
+.logOutBtn{
+  float:right;
+}

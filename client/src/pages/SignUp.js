@@ -45,7 +45,7 @@ function Signup() {
           onChange={e => {
             setUserName(e.target.value);
           }} /><br />
-        <input type="password" placeholder="password" patter required value={password}
+        <input type="password" placeholder="password" required value={password}
           onChange={e => {
             setPassword(e.target.value);
           }} />Minimum 8 chars<br />
@@ -56,7 +56,7 @@ function Signup() {
         <input type='submit' value='Sign Up' />
       </form>
       <Link to="/login">Already have an account?</Link><br/>
-      { isError && <small style={{ color: 'red' }}>Error in signing up!Password should be 8 chars minimun.</small>}
+      { isError && <small style={{ color: 'red' }}>Error in signing up!</small>}
     </>
   );
 }
