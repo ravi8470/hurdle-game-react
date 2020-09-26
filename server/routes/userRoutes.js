@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const User = require('../models/user.model');
 const authMiddleware = require('../middleware/auth.middleware');
+const { getHighScore } = require('./gameRoutes');
 
 router.post('/register', [
   body('email', 'Please enter a valid Email').isEmail().normalizeEmail().trim(),
@@ -69,8 +70,10 @@ router.post("/login",
         });
 
       let token = await getToken(user._id);
+      let highScore = await getHighScore(user._id);
       res.status(200).json({
-        token
+        token,
+        highScore: highScore.score
       });
 
     } catch (e) {
