@@ -22,6 +22,7 @@ export default class Game extends Component {
   myscore = null;
   // highScore = JSON.parse(localStorage.getItem("tokens")).highScore;
   animationId = null;
+
   updateGameArea = () => {
     var x, y, min, max, height, gap;
     for (let i = 0; i < this.myObstacles.length; i += 1) {
@@ -86,6 +87,9 @@ export default class Game extends Component {
   }
 
   preStartCheck = () => {
+    if(this.isRunning){
+      return
+    }
     axios.get(ALLOW_PLAY, { headers: { 'token': this.getToken() } })
       .then(result => {
         if (result.status === 200) {
