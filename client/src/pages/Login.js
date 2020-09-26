@@ -34,7 +34,8 @@ function Login(props) {
 
   if (isLoggedIn) {
     console.log('inside isloggedin')
-    return <Redirect to={referer} />;
+    // return <Redirect to={referer} />;
+    return <Redirect to="/game" />;
   }
   return (
     <>

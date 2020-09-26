@@ -6,6 +6,8 @@ import Admin from "./pages/Admin";
 import { AuthContext } from "./context/auth";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
+import Game from "./pages/Game";
+import './App.css'
 
 function App(props) {
   const existingTokens = JSON.parse(localStorage.getItem("tokens"));
@@ -19,6 +21,9 @@ function App(props) {
     }
     setAuthTokens(data)
   }
+  const logout = () => {
+    setTokens(null);
+  }
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
       <Router>
@@ -30,11 +35,16 @@ function App(props) {
             <li>
               <Link to="/admin">Admin Page</Link>
             </li>
+            <li>
+              <Link to="/game">Game Page</Link>
+            </li>
+            {(existingTokens) && (<button onClick={() => logout()}>Logout</button>)}
           </ul>
           <Route exact path="/" component={Home} />
           <Route path="/login" component={Login} />
           <Route path="/register" component={Signup} />
           <PrivateRoute path="/admin" component={Admin} />
+          <PrivateRoute path="/game" component={Game} />
         </div>
       </Router>
     </AuthContext.Provider>

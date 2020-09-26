@@ -15,7 +15,7 @@ function Signup() {
 
   function doSignUp(e) {
     e.preventDefault();
-    if(password != confirmPassword){
+    if(password !== confirmPassword){
       setIsError(true);
       return;
     }
@@ -35,7 +35,7 @@ function Signup() {
   }
 
   if (isSignedUp) {
-    return <Redirect to="/" />;
+    return <Redirect to="/game" />;
   }
 
   return (
