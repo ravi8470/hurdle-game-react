@@ -22,22 +22,23 @@ export default class Game extends Component {
   myscore = null;
   // highScore = JSON.parse(localStorage.getItem("tokens")).highScore;
   animationId = null;
+  obstacleId = 0;
 
   updateGameArea = () => {
     var x, y, min, max, height, gap;
-    for (let i = 0; i < this.myObstacles.length; i += 1) {
-      if (this.myGamePiece.crashWith(this.myObstacles[i])) {
-        this.myGameArea.stop();
-        // document.getElementById("myfilter").style.display = "block";
-        // document.getElementById("myrestartbutton").style.display = "block";
-        return;
-      }
-    }
-    if (this.myObstacles.length > 18) {
-      // this.myObstacles.splice(0, 6)
-      // this.myObstacles = this.myObstacles.slice(-6)
-      this.myObstacles = this.myObstacles.filter(x => x.x > -10);
-    }
+    // for (let i = 0; i < this.myObstacles.length; i += 1) {
+    //   if (this.myGamePiece.crashWith(this.myObstacles[i])) {
+    //     this.myGameArea.stop();
+    //     // document.getElementById("myfilter").style.display = "block";
+    //     // document.getElementById("myrestartbutton").style.display = "block";
+    //     return;
+    //   }
+    // }
+    // if (this.myObstacles.length > 18) {
+    //   // this.myObstacles.splice(0, 6)
+    //   // this.myObstacles = this.myObstacles.slice(-6)
+    //   this.myObstacles = this.myObstacles.filter(x => x.x > -10);
+    // }
     if (this.myGameArea.pause === false) {
       this.myGameArea.clear();
       this.myGameArea.frameNo += 1;
@@ -51,8 +52,13 @@ export default class Game extends Component {
         min = 50;
         max = 100;
         gap = Math.floor(Math.random() * (max - min + 1) + min);
-        this.myObstacles.push(new GameComponent(10, height, "green", x, 0, null, this.context));
-        this.myObstacles.push(new GameComponent(10, x - height - gap, "green", x, height + gap, null, this.context));
+        // this.myObstacles.push(new GameComponent(10, height, "green", x, 0, null, this.context));
+        this.myObstacles[this.obstacleId] = new GameComponent(10, height, "green", x, 0, null, this.context);
+        this.obstacleId++;
+        // this.myObstacles.push(new GameComponent(10, x - height - gap, "green", x, height + gap, null, this.context));
+        this.myObstacles[this.obstacleId] = new GameComponent(10, x - height - gap, "green", x, height + gap, null, this.context);
+        this.obstacleId++;
+        this.obstacleId = this.obstacleId % 8;
       }
       // for (let i = 0; i < this.myObstacles.length; i += 1) {
       //   this.myObstacles[i].x += -1;
@@ -73,6 +79,7 @@ export default class Game extends Component {
       }
       this.myGamePiece.update();
     }
+
     for (let i = 0; i < this.myObstacles.length; i += 1) {
       if (this.myGamePiece.crashWith(this.myObstacles[i])) {
         this.myGameArea.stop();
@@ -81,7 +88,8 @@ export default class Game extends Component {
         return;
       }
       this.myObstacles[i].x += -1;
-      (this.myObstacles[i].x > -10) && this.myObstacles[i].update();
+      // (this.myObstacles[i].x > -10) && this.myObstacles[i].update();
+      this.myObstacles[i].update();
     }
     this.animationId = window.requestAnimationFrame(this.updateGameArea)
   }
@@ -113,6 +121,7 @@ export default class Game extends Component {
     this.myscore = new GameComponent(null, null, "black", 260, 25, "text", this.context);
     this.myGamePiece = new GameComponent(30, 30, "red", 10, 75, null, this.context);
     this.myObstacles = [];
+    this.obstacleId = 0;
     this.isRunning = true;
     // this.myGameArea.start();
     window.requestAnimationFrame(this.updateGameArea)
@@ -204,6 +213,7 @@ export default class Game extends Component {
     this.myObstacles = null;
     this.myGamePiece = null;
     this.myscore = null;
+    this.obstacleId = null;
     window.cancelAnimationFrame(this.animationId)
   }
 
